@@ -2,13 +2,14 @@ import Cardinal
 import Magnitude
 import Testing
 import Ratio
+import Rational
 
 private enum A {}
 private enum B {}
 private enum C {}
 
-private func magnitude(_ value: UInt) -> Magnitude::Magnitude<Cardinal> {
-    Magnitude::Magnitude(Cardinal(value))
+private func magnitude(_ value: UInt128) -> Magnitude::Magnitude<Rational> {
+    try! Rational(numerator: value).magnitude
 }
 
 private struct Count<Tag>: Carrier.`Protocol` {

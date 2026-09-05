@@ -11,6 +11,9 @@ let package = Package(
         .library(name: "Ratio", targets: ["Ratio"]),
     ],
     dependencies: [
+        .package(url: "https://github.com/swift-atoms/swift-rational.git", branch: "main"),
+        .package(url: "https://github.com/swift-atoms/swift-division.git", branch: "main"),
+        .package(url: "https://github.com/swift-atoms/swift-difference.git", branch: "main"),
         .package(url: "https://github.com/swift-atoms/swift-multiplication.git", branch: "main"),
         .package(url: "https://github.com/swift-atoms/swift-magnitude.git", branch: "main"),
         .package(
@@ -38,6 +41,9 @@ let package = Package(
         .target(
             name: "Ratio",
             dependencies: [
+                .product(name: "Rational", package: "swift-rational"),
+                .product(name: "Division", package: "swift-division"),
+                .product(name: "Difference", package: "swift-difference"),
                 .product(name: "Multiplication", package: "swift-multiplication"),
                 .product(name: "Magnitude", package: "swift-magnitude"),
                 .product(name: "Cardinal", package: "swift-cardinal"),
@@ -51,6 +57,8 @@ let package = Package(
             name: "Ratio Tests",
             dependencies: [
                 .target(name: "Ratio"),
+                .product(name: "Rational", package: "swift-rational"),
+                .product(name: "Difference", package: "swift-difference"),
                 .product(name: "Cardinal", package: "swift-cardinal"),
                 .product(name: "Magnitude", package: "swift-magnitude"),
             ]

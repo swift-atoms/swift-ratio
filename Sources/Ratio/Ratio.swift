@@ -1,222 +1,128 @@
-public import Multiplication
 public import Magnitude
+public import Rational
 @_exported public import Cardinal
 @_exported public import Carrier_Protocol
 @_exported public import Polarity
 @_exported public import Property
 @_exported public import Tagged
 
-public struct Ratio<From: ~Copyable & ~Escapable, To: ~Copyable & ~Escapable>: Hashable,
-    Sendable
-{
-    public typealias Magnitude = Magnitude::Magnitude<Cardinal>
+/// An exact rational conversion from one domain into another.
+public struct Ratio<From: ~Copyable & ~Escapable, To: ~Copyable & ~Escapable>: Hashable, Sendable {
+    public let value: Rational
+}
 
-    @usableFromInline
-    internal let _polarity: Polarity
+extension Ratio where From: ~Copyable & ~Escapable, To: ~Copyable & ~Escapable {
+    public typealias Magnitude = Magnitude::Magnitude<Rational>
+    public typealias Error = Ratio::Failure
 
-    public let magnitude: Magnitude
+    public init(_ value: Rational) { self.value = value }
 
-    @inlinable
+    public init(_ factor: Int) { self.init(Rational(Int128(factor))) }
+
+    public init(
+        numerator: UInt128,
+        denominator: UInt128 = 1,
+        polarity: Polarity = .positive
+    ) throws(Error) {
+        do {
+            self.init(try Rational(numerator: numerator, denominator: denominator, polarity: polarity))
+        } catch { throw Error(error) }
+    }
+
     public init(polarity: Polarity, magnitude: Magnitude) {
-        self._polarity = magnitude.value == .zero ? .positive : polarity
-        self.magnitude = magnitude
+        self.init(polarity == .negative ? -magnitude.value : magnitude.value)
     }
 
-    @inlinable
-    public var polarity: Polarity? {
-        magnitude.value == .zero ? nil : _polarity
-    }
-
-    @inlinable
-    public init(_ factor: Int) {
-        self.init(
-            polarity: factor >= 0 ? .positive : .negative,
-            magnitude: Magnitude(Cardinal(factor.magnitude))
-        )
-    }
-
-    @inlinable
     public static func positive(_ magnitude: Magnitude) -> Self {
         Self(polarity: .positive, magnitude: magnitude)
     }
 
-    @inlinable
     public static func negative(_ magnitude: Magnitude) -> Self {
         Self(polarity: .negative, magnitude: magnitude)
     }
 
-    @inlinable
-    public static var zero: Self { .positive(Magnitude(.zero)) }
+    public static var zero: Self { Self(Rational.zero) }
+
+    public var polarity: Polarity? { value.polarity }
+    public var numerator: UInt128 { value.numerator }
+    public var denominator: UInt128 { value.denominator }
+
+    public func intValue() throws(Error) -> Int {
+        let integer: Int128
+        do { integer = try value.integer() }
+        catch { throw error == .inexact ? .inexact : .unrepresentable }
+        guard let result = Int(exactly: integer) else { throw .unrepresentable }
+        return result
+    }
+
+    public func inverted() throws(Error) -> Ratio<To, From> {
+        do { return Ratio<To, From>(try value.inverted()) }
+        catch { throw Error(error) }
+    }
+
+    public func composed<Next: ~Copyable & ~Escapable>(
+        with other: Ratio<To, Next>
+    ) throws(Error) -> Ratio<From, Next> {
+        do { return Ratio<From, Next>(try value.multiplied(by: other.value)) }
+        catch { throw Error(error) }
+    }
+
+    public func applying(to quantity: Rational) throws(Error) -> Rational {
+        do { return try value.multiplied(by: quantity) }
+        catch { throw Error(error) }
+    }
+
+    public func applying(to quantity: Int128) throws(Error) -> Int128 {
+        do { return try value.applying(to: quantity) }
+        catch { throw Error(error) }
+    }
+
+    public func applying(to quantity: Tagged<From, Rational>) throws(Error) -> Tagged<To, Rational> {
+        Tagged<To, Rational>(_unchecked: try applying(to: quantity.underlying))
+    }
+
+    public func applying(to quantity: Tagged<From, Int128>) throws(Error) -> Tagged<To, Int128> {
+        Tagged<To, Int128>(_unchecked: try applying(to: quantity.underlying))
+    }
+
+    /// Divides by a positive integral factor; the remainder is in the output unit.
+    public func quotient(dividing quantity: Int128) throws(Error) -> (quotient: Int128, remainder: Int128) {
+        guard polarity != nil else { throw .zeroFactor }
+        guard polarity == .positive else { throw .negativeFactor }
+        guard denominator == 1 else { throw .nonintegralFactor }
+        do { return try value.quotient(dividing: quantity) }
+        catch { throw Error(error) }
+    }
+
+    public func quotient(
+        dividing quantity: Tagged<To, Int128>
+    ) throws(Error) -> (quotient: Tagged<From, Int128>, remainder: Tagged<To, Int128>) {
+        let result = try quotient(dividing: quantity.underlying)
+        return (
+            Tagged<From, Int128>(_unchecked: result.quotient),
+            Tagged<To, Int128>(_unchecked: result.remainder)
+        )
+    }
 }
 
 extension Ratio where From == To, From: ~Copyable & ~Escapable {
-    @inlinable public static var identity: Self { .positive(Magnitude(Cardinal(1 as UInt))) }
-    @inlinable public static var negate: Self { .negative(Magnitude(Cardinal(1 as UInt))) }
+    public static var identity: Self { Self(Rational.one) }
+    public static var negate: Self { Self(-Rational.one) }
+}
+
+extension Ratio: Magnitude::Representable where From: ~Copyable & ~Escapable, To: ~Copyable & ~Escapable {
+    public var magnitude: Magnitude { value.magnitude }
 }
 
 extension Ratio: CustomStringConvertible {
-    public var description: String {
-        let factor: String
-        switch polarity {
-        case .some(.positive): factor = magnitude.value.rawValue.description
-        case .some(.negative): factor = "-" + magnitude.value.rawValue.description
-        case nil: factor = "0"
-        }
-        return "Ratio<\(From.self), \(To.self)>(\(factor))"
-    }
+    public var description: String { "Ratio<\(From.self), \(To.self)>(\(value))" }
 }
 
 extension Ratio: ExpressibleByIntegerLiteral where From == To {
     @_disfavoredOverload
-    @inlinable public init(integerLiteral value: Int) { self.init(value) }
+    public init(integerLiteral value: Int) { self.init(value) }
 }
 
-extension Ratio where From: ~Copyable & ~Escapable, To: ~Copyable & ~Escapable {
-    public enum Error: Swift.Error, Hashable, Sendable {
-        case zeroFactor
-        case negativeFactor
-        case overflow
-        case unrepresentable
-    }
-
-
-    @inlinable
-    public var multiply: Property<Multiplication, Self> { Property(self) }
-
-    @inlinable
-    public func intValue() throws(Error) -> Int {
-        switch polarity {
-        case nil:
-            return 0
-        case .some(.positive):
-            guard magnitude.value.rawValue <= UInt(Int.max) else { throw .unrepresentable }
-            return Int(magnitude.value.rawValue)
-        case .some(.negative):
-            let minimumMagnitude = UInt(Int.max) + 1
-            if magnitude.value.rawValue == minimumMagnitude { return Int.min }
-            guard magnitude.value.rawValue <= UInt(Int.max) else { throw .unrepresentable }
-            return -Int(magnitude.value.rawValue)
-        }
-    }
-}
-
-extension Property {
-    @inlinable
-    public func exact<
-        A: ~Copyable & ~Escapable,
-        B: ~Copyable & ~Escapable,
-        C: ~Copyable & ~Escapable
-    >(
-        by other: Ratio<B, C>
-    ) throws(Ratio<A, C>.Error) -> Ratio<A, C>
-    where Tag == Multiplication, Base == Ratio<A, B> {
-        let result: (polarity: Polarity, magnitude: UInt)
-        do {
-            result = try Multiplication.Signed.exact(
-                lhsMagnitude: base.magnitude.value.rawValue,
-                lhsPolarity: base._polarity,
-                rhsMagnitude: other.magnitude.value.rawValue,
-                rhsPolarity: other._polarity
-            )
-        } catch {
-            throw .overflow
-        }
-        return Ratio<A, C>(
-            polarity: result.polarity,
-            magnitude: Ratio<A, C>.Magnitude(Cardinal(result.magnitude))
-        )
-    }
-
-    @inlinable
-    public func exact<
-        A: ~Copyable & ~Escapable,
-        B: ~Copyable & ~Escapable,
-        Input: Carrier.`Protocol`
-    >(
-        by count: Input
-    ) throws(Ratio<A, B>.Error) -> Tagged<B, Cardinal>
-    where
-        Tag == Multiplication,
-        Base == Ratio<A, B>,
-        Input.Domain == A,
-        Input.Underlying == Cardinal
-    {
-        Tagged<B, Cardinal>(
-            _unchecked: try base.multiplyCardinalExactly(count.underlying)
-        )
-    }
-}
-
-extension Ratio where From: ~Copyable & ~Escapable, To: ~Copyable & ~Escapable {
-
-    @usableFromInline
-    internal func multiplyCardinalExactly(_ count: Cardinal) throws(Error) -> Cardinal {
-        if count.rawValue == 0 { return Cardinal(0 as UInt) }
-        guard polarity != .negative else { throw .negativeFactor }
-        do {
-            return Cardinal(
-                try Multiplication.exact(magnitude.value.rawValue, count.rawValue)
-            )
-        } catch {
-            throw .overflow
-        }
-    }
-}
-
-@inlinable
-public func * <
-    A: ~Copyable & ~Escapable,
-    B: ~Copyable & ~Escapable,
-    C: ~Copyable & ~Escapable
->(
-    lhs: Ratio<A, B>, rhs: Ratio<B, C>
-) -> Ratio<A, C> {
-    do { return try lhs.multiply.exact(by: rhs) }
-    catch { preconditionFailure("Ratio overflow in multiplication") }
-}
-
-@inlinable
-public func * <
-    A: ~Copyable & ~Escapable,
-    B: ~Copyable & ~Escapable,
-    Input: Carrier.`Protocol`
->(
-    lhs: Ratio<A, B>, rhs: Input
-) -> Tagged<B, Cardinal>
-where Input.Domain == A, Input.Underlying == Cardinal {
-    do { return try lhs.multiply.exact(by: rhs) }
-    catch let error {
-        preconditionFailure("Invalid Cardinal scaling by Ratio: \(error)")
-    }
-}
-
-@inlinable
-public func * <
-    A: ~Copyable & ~Escapable,
-    B: ~Copyable & ~Escapable,
-    Input: Carrier.`Protocol`
->(
-    lhs: Input, rhs: Ratio<A, B>
-) -> Tagged<B, Cardinal>
-where Input.Domain == A, Input.Underlying == Cardinal {
-    rhs * lhs
-}
-
-extension Ratio where From: ~Copyable & ~Escapable, To: ~Copyable & ~Escapable {
-    @inlinable
-    public func quotientAndRemainder(
-        dividing count: Tagged<To, Cardinal>
-    ) throws(Error) -> (quotient: Tagged<From, Cardinal>, remainder: Tagged<To, Cardinal>) {
-        guard polarity != nil else { throw .zeroFactor }
-        guard polarity == .positive else { throw .negativeFactor }
-        let result = count.underlying.rawValue.quotientAndRemainder(
-            dividingBy: magnitude.value.rawValue
-        )
-        return (
-            Tagged<From, Cardinal>(_unchecked: Cardinal(result.quotient)),
-            Tagged<To, Cardinal>(_unchecked: Cardinal(result.remainder))
-        )
-    }
-}
-
-extension Ratio: Magnitude::Representable {}
+#if !hasFeature(Embedded)
+    extension Ratio: Codable where From: ~Copyable & ~Escapable, To: ~Copyable & ~Escapable {}
+#endif
