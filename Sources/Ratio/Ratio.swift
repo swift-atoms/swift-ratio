@@ -13,7 +13,6 @@ public struct Ratio<From: ~Copyable & ~Escapable, To: ~Copyable & ~Escapable>: H
 
 extension Ratio where From: ~Copyable & ~Escapable, To: ~Copyable & ~Escapable {
     public typealias Magnitude = Magnitude::Magnitude<Rational>
-    public typealias Error = Ratio::Failure
 
     public init(_ value: Rational) { self.value = value }
 

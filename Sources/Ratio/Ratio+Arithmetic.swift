@@ -59,7 +59,7 @@ extension Property {
         A: ~Copyable & ~Escapable,
         B: ~Copyable & ~Escapable,
         C: ~Copyable & ~Escapable
-    >(by other: Ratio<B, C>) throws(Ratio::Failure) -> Ratio<A, C>
+    >(by other: Ratio<B, C>) throws(Ratio<A, B>.Error) -> Ratio<A, C>
     where Tag == Multiplication, Base == Ratio<A, B> {
         try base.composed(with: other)
     }
@@ -68,7 +68,7 @@ extension Property {
         A: ~Copyable & ~Escapable,
         B: ~Copyable & ~Escapable,
         Input: Carrier.`Protocol`
-    >(by count: Input) throws(Ratio::Failure) -> Tagged<B, Cardinal>
+    >(by count: Input) throws(Ratio<A, B>.Error) -> Tagged<B, Cardinal>
     where Tag == Multiplication, Base == Ratio<A, B>, Input.Domain == A, Input.Underlying == Cardinal {
         try base.applying(to: count)
     }
@@ -77,7 +77,7 @@ extension Property {
         A: ~Copyable & ~Escapable,
         B: ~Copyable & ~Escapable,
         Input: Carrier.`Protocol`
-    >(by offset: Input) throws(Ratio::Failure) -> Tagged<B, Difference>
+    >(by offset: Input) throws(Ratio<A, B>.Error) -> Tagged<B, Difference>
     where Tag == Multiplication, Base == Ratio<A, B>, Input.Domain == A, Input.Underlying == Difference {
         try base.applying(to: offset)
     }

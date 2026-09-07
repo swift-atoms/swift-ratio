@@ -10,9 +10,9 @@ private enum Minute {}
 private enum Yoctosecond {}
 
 @Suite
-struct `Ratio Rational Tests` {}
+struct `Ratios preserve exact rational quantities` {}
 
-extension `Ratio Rational Tests` {
+extension `Ratios preserve exact rational quantities` {
     @Test
     func `inverse minute conversion preserves fractions and domains`() throws {
         let seconds = try Ratio<Minute, Second>(numerator: 60)
@@ -22,7 +22,7 @@ extension `Ratio Rational Tests` {
         #expect(try output.underlying == Rational(numerator: 1, denominator: 60, polarity: .negative))
         #expect(try seconds.applying(to: output) == input)
         #expect(try minutes.composed(with: seconds) == Ratio<Second, Second>.identity)
-        #expect(throws: Ratio::Failure.inexact) { try minutes.applying(to: Int128(-1)) }
+        #expect(throws: Ratio<Second, Minute>.Error.inexact) { try minutes.applying(to: Int128(-1)) }
     }
 
     @Test
@@ -44,10 +44,10 @@ extension `Ratio Rational Tests` {
         let quotient: Tagged<Minute, Int128> = result.quotient
         let remainder: Tagged<Second, Int128> = result.remainder
         #expect(quotient.underlying == -2 && remainder.underlying == 59)
-        #expect(throws: Ratio::Failure.nonintegralFactor) {
+        #expect(throws: Ratio<Second, Minute>.Error.nonintegralFactor) {
             try ratio.inverted().quotient(dividing: Int128(1))
         }
-        #expect(throws: Ratio::Failure.zeroFactor) { try Ratio<Minute, Second>.zero.inverted() }
+        #expect(throws: Ratio<Minute, Second>.Error.zeroFactor) { try Ratio<Minute, Second>.zero.inverted() }
     }
 
     @Test
@@ -58,7 +58,7 @@ extension `Ratio Rational Tests` {
         #expect(output.underlying == Difference(-120))
         #expect(try ratio.inverted().applying(to: output) == input)
         let maximum = Tagged<Minute, Difference>(_unchecked: Difference.positive(.init(Cardinal.max)))
-        #expect(throws: Ratio::Failure.overflow) { try ratio.applying(to: maximum) }
+        #expect(throws: Ratio<Minute, Second>.Error.overflow) { try ratio.applying(to: maximum) }
     }
 
     @Test
@@ -66,7 +66,7 @@ extension `Ratio Rational Tests` {
         let ratio = try Ratio<Second, Minute>(numerator: 1, denominator: 60)
         let whole = Tagged<Second, Cardinal>(_unchecked: Cardinal(120))
         #expect(try ratio.applying(to: whole).underlying == Cardinal(2))
-        #expect(throws: Ratio::Failure.inexact) {
+        #expect(throws: Ratio<Second, Minute>.Error.inexact) {
             try ratio.applying(to: Tagged<Second, Cardinal>(_unchecked: Cardinal(1)))
         }
     }
