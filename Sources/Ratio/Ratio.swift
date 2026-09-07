@@ -6,7 +6,7 @@ public import Rational
 @_exported public import Property
 @_exported public import Tagged
 
-/// An exact rational conversion from one domain into another.
+
 public struct Ratio<From: ~Copyable & ~Escapable, To: ~Copyable & ~Escapable>: Hashable, Sendable {
     public let value: Rational
 }
@@ -83,7 +83,7 @@ extension Ratio where From: ~Copyable & ~Escapable, To: ~Copyable & ~Escapable {
         Tagged<To, Int128>(_unchecked: try applying(to: quantity.underlying))
     }
 
-    /// Divides by a positive integral factor; the remainder is in the output unit.
+
     public func quotient(dividing quantity: Int128) throws(Error) -> (quotient: Int128, remainder: Int128) {
         guard polarity != nil else { throw .zeroFactor }
         guard polarity == .positive else { throw .negativeFactor }

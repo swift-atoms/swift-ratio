@@ -1,6 +1,6 @@
 internal import Rational
 
-/// A conversion failure independent of its source and destination domains.
+
 public enum Failure: Swift.Error, Hashable, Sendable {
     case denominator
     case zeroFactor
