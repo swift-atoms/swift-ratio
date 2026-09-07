@@ -9,6 +9,9 @@ let package = Package(
     ],
     products: [
         .library(name: "Ratio", targets: ["Ratio"]),
+        .library(name: "Ratio Standard Library Integration", targets: ["Ratio Standard Library Integration"]),
+        .library(name: "Ratio Foundation Library Integration", targets: ["Ratio Foundation Library Integration"]),
+        .library(name: "Ratio Test Support", targets: ["Ratio Test Support"]),
     ],
     dependencies: [
         .package(url: "https://github.com/swift-atoms/swift-rational.git", branch: "main"),
@@ -51,7 +54,30 @@ let package = Package(
                 .product(name: "Property", package: "swift-property"),
                 .product(name: "Tagged", package: "swift-tagged"),
                 .product(name: "Carrier", package: "swift-carrier"),
-            ]
+            ],
+            path: "Sources/Ratio"
+        ),
+        .target(
+            name: "Ratio Standard Library Integration",
+            dependencies: [
+                .target(name: "Ratio"),
+            ],
+            path: "Sources/Ratio Standard Library Integration"
+        ),
+        .target(
+            name: "Ratio Foundation Library Integration",
+            dependencies: [
+                .target(name: "Ratio"),
+                .target(name: "Ratio Standard Library Integration"),
+            ],
+            path: "Sources/Ratio Foundation Library Integration"
+        ),
+        .target(
+            name: "Ratio Test Support",
+            dependencies: [
+                .target(name: "Ratio"),
+            ],
+            path: "Tests/Support"
         ),
         .testTarget(
             name: "Ratio Tests",
@@ -61,14 +87,18 @@ let package = Package(
                 .product(name: "Difference", package: "swift-difference"),
                 .product(name: "Cardinal", package: "swift-cardinal"),
                 .product(name: "Magnitude", package: "swift-magnitude"),
-            ]
+                .target(name: "Ratio Test Support"),
+                .target(name: "Ratio Standard Library Integration"),
+                .target(name: "Ratio Foundation Library Integration"),
+            ],
+            path: "Tests/Ratio Tests"
         ),
     ],
     swiftLanguageModes: [.v6]
 )
 
-for target in package.targets where ![.system, .binary, .plugin, .macro].contains(target.type) {
-    target.swiftSettings = (target.swiftSettings ?? []) + [
+for target in package.targets {
+    target.swiftSettings = [
         .strictMemorySafety(),
         .enableUpcomingFeature("ExistentialAny"),
         .enableUpcomingFeature("InternalImportsByDefault"),
