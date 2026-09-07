@@ -50,7 +50,7 @@ let package = Package(
                 .product(name: "Polarity", package: "swift-polarity"),
                 .product(name: "Property", package: "swift-property"),
                 .product(name: "Tagged", package: "swift-tagged"),
-                .product(name: "Carrier Protocol", package: "swift-carrier"),
+                .product(name: "Carrier", package: "swift-carrier"),
             ]
         ),
         .testTarget(

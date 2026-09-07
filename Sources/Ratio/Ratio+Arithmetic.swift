@@ -1,5 +1,5 @@
 public import Cardinal
-public import Carrier_Protocol
+public import Carrier
 public import Difference
 internal import Division
 internal import Magnitude
