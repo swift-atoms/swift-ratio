@@ -9,8 +9,8 @@ let package = Package(
     ],
     products: [
         .library(name: "Ratio", targets: ["Ratio"]),
-        .library(name: "Ratio Standard Library Integration", targets: ["Ratio Standard Library Integration"]),
-        .library(name: "Ratio Foundation Library Integration", targets: ["Ratio Foundation Library Integration"]),
+
+        .library(name: "Ratio Foundation Integration", targets: ["Ratio Foundation Integration"]),
         .library(name: "Ratio Test Support", targets: ["Ratio Test Support"]),
     ],
     dependencies: [
@@ -57,20 +57,13 @@ let package = Package(
             ],
             path: "Sources/Ratio"
         ),
+
         .target(
-            name: "Ratio Standard Library Integration",
+            name: "Ratio Foundation Integration",
             dependencies: [
                 .target(name: "Ratio"),
             ],
-            path: "Sources/Ratio Standard Library Integration"
-        ),
-        .target(
-            name: "Ratio Foundation Library Integration",
-            dependencies: [
-                .target(name: "Ratio"),
-                .target(name: "Ratio Standard Library Integration"),
-            ],
-            path: "Sources/Ratio Foundation Library Integration"
+            path: "Sources/Ratio Foundation Integration"
         ),
         .target(
             name: "Ratio Test Support",
@@ -88,8 +81,7 @@ let package = Package(
                 .product(name: "Cardinal", package: "swift-cardinal"),
                 .product(name: "Magnitude", package: "swift-magnitude"),
                 .target(name: "Ratio Test Support"),
-                .target(name: "Ratio Standard Library Integration"),
-                .target(name: "Ratio Foundation Library Integration"),
+                .target(name: "Ratio Foundation Integration"),
             ],
             path: "Tests/Ratio Tests"
         ),

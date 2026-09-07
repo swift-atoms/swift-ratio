@@ -31,7 +31,7 @@ extension `Ratio Rational Tests` {
         let seconds = try Ratio<Second, Yoctosecond>(numerator: factor)
         let minutes = try Ratio<Minute, Second>(numerator: 60)
         let combined: Ratio<Minute, Yoctosecond> = try minutes.composed(with: seconds)
-        #expect(combined.numerator == factor * 60 && combined.denominator == 1)
+        #expect(combined.numerator == Integer(factor * 60) && combined.denominator == 1)
         #expect(try combined.applying(to: Int128(-1)) == -Int128(factor * 60))
         let fraction = try combined.inverted().applying(to: Rational(1))
         #expect(try fraction == Rational(numerator: 1, denominator: factor * 60))

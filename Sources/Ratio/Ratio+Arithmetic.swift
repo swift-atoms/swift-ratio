@@ -45,7 +45,7 @@ extension Ratio where From: ~Copyable & ~Escapable, To: ~Copyable & ~Escapable {
         guard polarity == .positive else { throw .negativeFactor }
         guard denominator == 1 else { throw .nonintegralFactor }
         let result: (quotient: UInt128, remainder: UInt128)
-        do { result = try Division.quotient(UInt128(count.underlying.rawValue), by: numerator) }
+        do { result = try value.quotient(dividing: UInt128(count.underlying.rawValue)) }
         catch { throw .overflow }
         return (
             Tagged<From, Cardinal>(_unchecked: Cardinal(UInt(result.quotient))),

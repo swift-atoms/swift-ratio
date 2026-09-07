@@ -44,12 +44,12 @@ extension Ratio where From: ~Copyable & ~Escapable, To: ~Copyable & ~Escapable {
     public static var zero: Self { Self(Rational.zero) }
 
     public var polarity: Polarity? { value.polarity }
-    public var numerator: UInt128 { value.numerator }
-    public var denominator: UInt128 { value.denominator }
+    public var numerator: Integer { value.numerator }
+    public var denominator: Integer { value.denominator }
 
     public func intValue() throws(Error) -> Int {
         let integer: Int128
-        do { integer = try value.integer() }
+        do { integer = try value.integer(as: Int128.self) }
         catch { throw error == .inexact ? .inexact : .unrepresentable }
         guard let result = Int(exactly: integer) else { throw .unrepresentable }
         return result
@@ -63,13 +63,11 @@ extension Ratio where From: ~Copyable & ~Escapable, To: ~Copyable & ~Escapable {
     public func composed<Next: ~Copyable & ~Escapable>(
         with other: Ratio<To, Next>
     ) throws(Error) -> Ratio<From, Next> {
-        do { return Ratio<From, Next>(try value.multiplied(by: other.value)) }
-        catch { throw Error(error) }
+        return Ratio<From, Next>(value.multiplied(by: other.value))
     }
 
     public func applying(to quantity: Rational) throws(Error) -> Rational {
-        do { return try value.multiplied(by: quantity) }
-        catch { throw Error(error) }
+        return value.multiplied(by: quantity)
     }
 
     public func applying(to quantity: Int128) throws(Error) -> Int128 {
@@ -114,15 +112,6 @@ extension Ratio: Magnitude::Representable where From: ~Copyable & ~Escapable, To
     public var magnitude: Magnitude { value.magnitude }
 }
 
-extension Ratio: CustomStringConvertible {
-    public var description: String { "Ratio<\(From.self), \(To.self)>(\(value))" }
-}
-
-extension Ratio: ExpressibleByIntegerLiteral where From == To {
-    @_disfavoredOverload
-    public init(integerLiteral value: Int) { self.init(value) }
-}
-
 #if !hasFeature(Embedded)
-    extension Ratio: Codable where From: ~Copyable & ~Escapable, To: ~Copyable & ~Escapable {}
+extension Ratio: Swift.Codable where From: ~Copyable & ~Escapable, To: ~Copyable & ~Escapable {}
 #endif

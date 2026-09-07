@@ -43,12 +43,11 @@ private struct Count<Tag>: Carrier.`Protocol` {
     #expect(ac == .positive(magnitude(6)))
 }
 
-@Test func `composition detects overflow`() {
-    #expect(throws: Ratio<A, C>.Error.overflow) {
-        try Ratio<A, B>.positive(magnitude(.max)).multiply.exact(
-            by: Ratio<B, C>.positive(magnitude(2))
-        )
-    }
+@Test func `composition grows beyond machine integer limits`() throws {
+    let value = try Ratio<A, B>.positive(magnitude(.max)).multiply.exact(
+        by: Ratio<B, C>.positive(magnitude(2))
+    )
+    #expect(value.value == Rational(UInt128.max) * 2)
 }
 
 @Test func `zero composition is canonical across full-width factors`() throws {
