@@ -1,5 +1,5 @@
-public import Magnitude
-public import Rational
+import Magnitude
+import Rational
 @_exported public import Cardinal
 @_exported public import Carrier
 @_exported public import Polarity
