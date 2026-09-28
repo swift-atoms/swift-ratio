@@ -26,7 +26,7 @@ let package = Package(
         .package(url: "https://github.com/swift-atoms/swift-ordinal.git", branch: "main"),
         .package(url: "https://github.com/swift-atoms/swift-rational.git", branch: "main"),
         .package(url: "https://github.com/swift-atoms/swift-division.git", branch: "main"),
-        .package(url: "https://github.com/swift-atoms/swift-difference.git", branch: "main", traits: ["default", "Tagged"]),
+        .package(url: "https://github.com/swift-atoms/swift-difference.git", branch: "main", traits: ["Tagged"]),
         .package(url: "https://github.com/swift-atoms/swift-multiplication.git", branch: "main"),
         .package(url: "https://github.com/swift-atoms/swift-magnitude.git", branch: "main"),
         .package(
