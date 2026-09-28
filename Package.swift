@@ -21,7 +21,7 @@ let package = Package(
         .package(url: "https://github.com/swift-atoms/swift-magnitude.git", branch: "main"),
         .package(
             url: "https://github.com/swift-atoms/swift-cardinal.git",
-            branch: "main", traits: ["Tagged"]
+            branch: "main"
         ),
         .package(
             url: "https://github.com/swift-atoms/swift-polarity.git",
