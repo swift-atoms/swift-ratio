@@ -150,13 +150,6 @@ let package = Package(
             ],
             path: "Tests/Ratio Tests"
         ),
-        .testTarget(name: "Ratio Tagged Difference Migration Tests", dependencies: [
-            .target(name: "Ratio"),
-            .product(name: "Difference", package: "swift-difference"),
-            .product(name: "Cardinal", package: "swift-cardinal"),
-            .product(name: "Ordinal", package: "swift-ordinal"),
-            .product(name: "Tagged", package: "swift-tagged"),
-        ], path: "Tests/Ratio Tagged Difference Migration Tests"),
     ],
     swiftLanguageModes: [.v6]
 )
