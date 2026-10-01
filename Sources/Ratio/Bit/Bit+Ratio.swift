@@ -1,12 +1,12 @@
 #if Bit
 public import Bit
-public import Cardinal
-public import Difference
-public import Index
-public import Ordinal
-public import Tagged
-public import Magnitude
-public import Rational
+import Cardinal
+import Difference
+import Index
+import Ordinal
+import Tagged
+import Magnitude
+import Rational
 
 extension Ratio where To == Bit, From: FixedWidthInteger {
 

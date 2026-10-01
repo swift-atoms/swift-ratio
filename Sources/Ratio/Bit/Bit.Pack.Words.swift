@@ -1,12 +1,12 @@
 #if Bit
 public import Bit
 public import Cardinal
-public import Difference
-public import Index
-public import Ordinal
+import Difference
+import Index
+import Ordinal
 public import Tagged
-public import Magnitude
-public import Rational
+import Magnitude
+import Rational
 public import struct Cardinal.Cardinal
 public import struct Tagged.Tagged
 

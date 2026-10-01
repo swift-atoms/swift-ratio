@@ -1,12 +1,12 @@
 #if Bit
 public import Bit
-public import Cardinal
-public import Difference
+import Cardinal
+import Difference
 public import Index
-public import Ordinal
+import Ordinal
 public import Tagged
-public import Magnitude
-public import Rational
+import Magnitude
+import Rational
 
 extension Index<Bit> {
 
