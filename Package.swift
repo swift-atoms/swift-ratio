@@ -146,7 +146,6 @@ let package = Package(
                 .product(name: "Cardinal", package: "swift-cardinal"),
                 .product(name: "Magnitude", package: "swift-magnitude"),
                 .target(name: "Ratio Test Support"),
-                .target(name: "Ratio Foundation Integration"),
             ],
             path: "Tests/Ratio Tests"
         ),
@@ -154,7 +153,7 @@ let package = Package(
     swiftLanguageModes: [.v6]
 )
 
-for target in package.targets where ![.system, .binary, .plugin].contains(target.type) {
+for target in package.targets where ![.system, .binary, .plugin, .macro].contains(target.type) {
     target.swiftSettings = (target.swiftSettings ?? []) + [
         .strictMemorySafety(),
         .enableUpcomingFeature("ExistentialAny"),

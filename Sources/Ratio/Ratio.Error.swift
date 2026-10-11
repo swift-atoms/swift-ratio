@@ -1,7 +1,7 @@
 internal import Rational
 
 extension Ratio where From: ~Copyable & ~Escapable, To: ~Copyable & ~Escapable {
-    public enum Error: Swift.Error, Hashable, Sendable {
+    public enum Error: Swift::Error, Hashable, Sendable {
         case denominator
         case zeroFactor
         case negativeFactor

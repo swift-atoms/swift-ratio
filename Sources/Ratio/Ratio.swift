@@ -112,5 +112,5 @@ extension Ratio: Magnitude::Representable where From: ~Copyable & ~Escapable, To
 }
 
 #if !hasFeature(Embedded)
-extension Ratio: Swift.Codable where From: ~Copyable & ~Escapable, To: ~Copyable & ~Escapable {}
+extension Ratio: Swift::Codable where From: ~Copyable & ~Escapable, To: ~Copyable & ~Escapable {}
 #endif

@@ -13,9 +13,12 @@ private func magnitude(_ value: UInt128) -> Magnitude::Magnitude<Rational> {
 }
 
 private struct Count<Tag>: Carrier.`Protocol` {
-    typealias Domain = Tag
     let underlying: Cardinal
     init(_ underlying: Cardinal) { self.underlying = underlying }
+}
+
+extension Count {
+    typealias Domain = Tag
 }
 
 @Test func `ratio preserves the full unsigned magnitude range`() {

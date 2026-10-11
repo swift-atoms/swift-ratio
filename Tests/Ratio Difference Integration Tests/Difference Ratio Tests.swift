@@ -14,9 +14,12 @@ private func magnitude(_ value: UInt) -> Difference.Magnitude {
 }
 
 private struct Offset<Tag>: Carrier.`Protocol` {
-    typealias Domain = Tag
     let underlying: Difference
     init(_ underlying: Difference) { self.underlying = underlying }
+}
+
+extension Offset {
+    typealias Domain = Tag
 }
 
 @Test func `tagged difference scales across domains`() throws {

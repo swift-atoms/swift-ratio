@@ -6,6 +6,6 @@ import Rational
 @_exported public import Property
 @_exported public import Tagged
 
-extension Ratio: Swift.CustomStringConvertible {
+extension Ratio: Swift::CustomStringConvertible {
     public var description: String { "Ratio<\(From.self), \(To.self)>(\(value))" }
 }
