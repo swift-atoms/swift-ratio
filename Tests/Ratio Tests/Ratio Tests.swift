@@ -9,7 +9,11 @@ private enum B {}
 private enum C {}
 
 private func magnitude(_ value: UInt128) -> Magnitude::Magnitude<Rational> {
-    try! Rational(numerator: value).magnitude
+    do {
+        return try Rational(numerator: value).magnitude
+    } catch {
+        preconditionFailure("Rational(numerator:) cannot fail for a UInt128: \(error)")
+    }
 }
 
 private struct Count<Tag>: Carrier.`Protocol` {
