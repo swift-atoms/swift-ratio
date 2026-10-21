@@ -1,8 +1,8 @@
 import Cardinal
 import Magnitude
-import Testing
 import Ratio
 import Rational
+import Testing
 
 private enum A {}
 private enum B {}

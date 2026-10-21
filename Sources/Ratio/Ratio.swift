@@ -1,11 +1,10 @@
-public import Magnitude
-public import Rational
 @_exported public import Cardinal
 @_exported public import Carrier
+public import Magnitude
 @_exported public import Polarity
 @_exported public import Property
+public import Rational
 @_exported public import Tagged
-
 
 public struct Ratio<From: ~Copyable & ~Escapable, To: ~Copyable & ~Escapable>: Hashable, Sendable {
     public let value: Rational
@@ -48,15 +47,13 @@ extension Ratio where From: ~Copyable & ~Escapable, To: ~Copyable & ~Escapable {
 
     public func intValue() throws(Error) -> Int {
         let integer: Int128
-        do { integer = try value.integer(as: Int128.self) }
-        catch { throw error == .inexact ? .inexact : .unrepresentable }
+        do { integer = try value.integer(as: Int128.self) } catch { throw error == .inexact ? .inexact : .unrepresentable }
         guard let result = Int(exactly: integer) else { throw .unrepresentable }
         return result
     }
 
     public func inverted() throws(Error) -> Ratio<To, From> {
-        do { return Ratio<To, From>(try value.inverted()) }
-        catch { throw Error(error) }
+        do { return Ratio<To, From>(try value.inverted()) } catch { throw Error(error) }
     }
 
     public func composed<Next: ~Copyable & ~Escapable>(
@@ -70,8 +67,7 @@ extension Ratio where From: ~Copyable & ~Escapable, To: ~Copyable & ~Escapable {
     }
 
     public func applying(to quantity: Int128) throws(Error) -> Int128 {
-        do { return try value.applying(to: quantity) }
-        catch { throw Error(error) }
+        do { return try value.applying(to: quantity) } catch { throw Error(error) }
     }
 
     public func applying(to quantity: Tagged<From, Rational>) throws(Error) -> Tagged<To, Rational> {
@@ -82,13 +78,11 @@ extension Ratio where From: ~Copyable & ~Escapable, To: ~Copyable & ~Escapable {
         Tagged<To, Int128>(_unchecked: try applying(to: quantity.underlying))
     }
 
-
     public func quotient(dividing quantity: Int128) throws(Error) -> (quotient: Int128, remainder: Int128) {
         guard polarity != nil else { throw .zeroFactor }
         guard polarity == .positive else { throw .negativeFactor }
         guard denominator == 1 else { throw .nonintegralFactor }
-        do { return try value.quotient(dividing: quantity) }
-        catch { throw Error(error) }
+        do { return try value.quotient(dividing: quantity) } catch { throw Error(error) }
     }
 
     public func quotient(
@@ -112,5 +106,5 @@ extension Ratio: Magnitude::Representable where From: ~Copyable & ~Escapable, To
 }
 
 #if !hasFeature(Embedded)
-extension Ratio: Swift::Codable where From: ~Copyable & ~Escapable, To: ~Copyable & ~Escapable {}
+    extension Ratio: Swift::Codable where From: ~Copyable & ~Escapable, To: ~Copyable & ~Escapable {}
 #endif

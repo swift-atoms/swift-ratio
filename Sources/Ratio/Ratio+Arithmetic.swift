@@ -18,8 +18,7 @@ extension Ratio where From: ~Copyable & ~Escapable, To: ~Copyable & ~Escapable {
         if count.underlying == .zero { return Tagged<To, Cardinal>(_unchecked: .zero) }
         guard polarity != .negative else { throw .negativeFactor }
         let scaled: UInt128
-        do { scaled = try value.applying(to: UInt128(count.underlying.rawValue)) }
-        catch { throw Error(error) }
+        do { scaled = try value.applying(to: UInt128(count.underlying.rawValue)) } catch { throw Error(error) }
         guard let result = UInt(exactly: scaled) else { throw .overflow }
         return Tagged<To, Cardinal>(_unchecked: Cardinal(result))
     }
@@ -32,10 +31,12 @@ extension Ratio where From: ~Copyable & ~Escapable, To: ~Copyable & ~Escapable {
         let input = offset.underlying.polarity == .negative ? -Int128(unsigned) : Int128(unsigned)
         let scaled = try applying(to: input)
         guard let magnitude = UInt(exactly: scaled.magnitude) else { throw .overflow }
-        return Tagged<To, Difference>(_unchecked: Difference(
-            polarity: scaled < 0 ? .negative : .positive,
-            magnitude: Difference.Magnitude(Cardinal(magnitude))
-        ))
+        return Tagged<To, Difference>(
+            _unchecked: Difference(
+                polarity: scaled < 0 ? .negative : .positive,
+                magnitude: Difference.Magnitude(Cardinal(magnitude))
+            )
+        )
     }
 
     public func quotientAndRemainder(
@@ -45,8 +46,7 @@ extension Ratio where From: ~Copyable & ~Escapable, To: ~Copyable & ~Escapable {
         guard polarity == .positive else { throw .negativeFactor }
         guard denominator == 1 else { throw .nonintegralFactor }
         let result: (quotient: UInt128, remainder: UInt128)
-        do { result = try value.quotient(dividing: UInt128(count.underlying.rawValue)) }
-        catch { throw .overflow }
+        do { result = try value.quotient(dividing: UInt128(count.underlying.rawValue)) } catch { throw .overflow }
         return (
             Tagged<From, Cardinal>(_unchecked: Cardinal(UInt(result.quotient))),
             Tagged<To, Cardinal>(_unchecked: Cardinal(UInt(result.remainder)))
@@ -84,21 +84,22 @@ extension Property {
 }
 
 public func * <A: ~Copyable & ~Escapable, B: ~Copyable & ~Escapable, C: ~Copyable & ~Escapable>(
-    lhs: Ratio<A, B>, rhs: Ratio<B, C>
+    lhs: Ratio<A, B>,
+    rhs: Ratio<B, C>
 ) -> Ratio<A, C> {
-    do { return try lhs.composed(with: rhs) }
-    catch { preconditionFailure("Ratio overflow in multiplication") }
+    do { return try lhs.composed(with: rhs) } catch { preconditionFailure("Ratio overflow in multiplication") }
 }
 
 public func * <A: ~Copyable & ~Escapable, B: ~Copyable & ~Escapable, Input: Carrier.`Protocol`>(
-    lhs: Ratio<A, B>, rhs: Input
+    lhs: Ratio<A, B>,
+    rhs: Input
 ) -> Tagged<B, Cardinal> where Input.Domain == A, Input.Underlying == Cardinal {
-    do { return try lhs.applying(to: rhs) }
-    catch { preconditionFailure("Invalid Cardinal scaling by Ratio: \(error)") }
+    do { return try lhs.applying(to: rhs) } catch { preconditionFailure("Invalid Cardinal scaling by Ratio: \(error)") }
 }
 
 public func * <A: ~Copyable & ~Escapable, B: ~Copyable & ~Escapable, Input: Carrier.`Protocol`>(
-    lhs: Input, rhs: Ratio<A, B>
+    lhs: Input,
+    rhs: Ratio<A, B>
 ) -> Tagged<B, Cardinal> where Input.Domain == A, Input.Underlying == Cardinal {
     rhs * lhs
 }

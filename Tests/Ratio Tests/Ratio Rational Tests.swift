@@ -1,7 +1,7 @@
 import Cardinal
 import Difference
-import Rational
 import Ratio
+import Rational
 import Tagged
 import Testing
 

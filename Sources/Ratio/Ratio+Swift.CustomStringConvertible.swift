@@ -1,9 +1,9 @@
-import Magnitude
-import Rational
 @_exported public import Cardinal
 @_exported public import Carrier
+import Magnitude
 @_exported public import Polarity
 @_exported public import Property
+import Rational
 @_exported public import Tagged
 
 extension Ratio: Swift::CustomStringConvertible {
