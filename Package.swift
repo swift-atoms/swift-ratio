@@ -105,10 +105,10 @@ let package = Package(
         .target(
             name: "Ratio",
             dependencies: [
-                .product(name: "Bit", package: "swift-bit", condition: .when(traits: ["Bit"])),
-                .product(name: "Index", package: "swift-index", condition: .when(traits: ["Bit"])),
-                .product(name: "Memory", package: "swift-memory", condition: .when(traits: ["Memory"])),
-                .product(name: "Ordinal", package: "swift-ordinal", condition: .when(traits: ["Bit", "Ordinal"])),
+                .product(name: "Bit", package: "swift-bit"),
+                .product(name: "Index", package: "swift-index"),
+                .product(name: "Memory", package: "swift-memory"),
+                .product(name: "Ordinal", package: "swift-ordinal"),
                 .product(name: "Rational", package: "swift-rational"),
                 .product(name: "Division", package: "swift-division"),
                 .product(name: "Difference", package: "swift-difference"),
