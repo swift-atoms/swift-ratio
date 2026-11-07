@@ -9,10 +9,14 @@ private enum Second {}
 private enum Minute {}
 private enum Yoctosecond {}
 
-@Suite
-struct `Ratios preserve exact rational quantities` {}
+enum `Ratio Rational Tests` {}
 
-extension `Ratios preserve exact rational quantities` {
+extension `Ratio Rational Tests` {
+    @Suite
+    struct `Ratios preserve exact rational quantities` {}
+}
+
+extension `Ratio Rational Tests`.`Ratios preserve exact rational quantities` {
     @Test
     func `inverse minute conversion preserves fractions and domains`() throws {
         let seconds = try Ratio<Minute, Second>(numerator: 60)
