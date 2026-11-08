@@ -1,10 +1,10 @@
-@_exported public import Cardinal
-@_exported public import Carrier
+public import Cardinal
+public import Carrier
 public import Magnitude
-@_exported public import Polarity
-@_exported public import Property
+public import Polarity
+public import Property
 public import Rational
-@_exported public import Tagged
+public import Tagged
 
 public struct Ratio<From: ~Copyable & ~Escapable, To: ~Copyable & ~Escapable>: Hashable, Sendable {
     public let value: Rational

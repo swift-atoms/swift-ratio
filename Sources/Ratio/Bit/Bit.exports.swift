@@ -1,10 +1,10 @@
 #if Bit
-    @_exported public import Bit
-    @_exported public import Cardinal
-    @_exported public import Difference
-    @_exported public import Index
-    @_exported public import Ordinal
-    @_exported public import Tagged
+    public import Bit
+    public import Cardinal
+    public import Difference
+    public import Index
+    public import Ordinal
+    public import Tagged
     import Magnitude
     import Rational
 
