@@ -113,7 +113,6 @@ extension Ratio: Magnitude::Representable where From: ~Copyable & ~Escapable, To
     @_exported public import Cardinal
     @_exported public import Carrier
     @_exported public import Difference
-    import Magnitude
     @_exported public import Ordinal
     @_exported public import Tagged
 
