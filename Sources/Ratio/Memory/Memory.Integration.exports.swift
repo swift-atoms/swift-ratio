@@ -1,3 +1,3 @@
 #if Memory
-    public import Memory
+    import Memory
 #endif
