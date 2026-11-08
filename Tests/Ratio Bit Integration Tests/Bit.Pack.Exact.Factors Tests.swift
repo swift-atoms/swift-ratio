@@ -10,9 +10,9 @@
     import Ratio
     import Testing
 
-enum `Bit.Pack.Exact.Factors Tests` {}
+    enum `Bit.Pack.Exact.Factors Tests` {}
 
-extension `Bit.Pack.Exact.Factors Tests` {
+    extension `Bit.Pack.Exact.Factors Tests` {
         @Suite
         struct `Bit packing preserves exact unsigned factors` {
             @Test
@@ -37,6 +37,6 @@ extension `Bit.Pack.Exact.Factors Tests` {
                 #expect(location.mask == 1)
             }
         }
-}
+    }
 
 #endif
