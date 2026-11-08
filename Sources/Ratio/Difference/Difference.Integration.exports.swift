@@ -1,6 +1,6 @@
 #if Difference
-    import Carrier
-    import Difference
-    import Property
-    import Tagged
+    @_exported public import Carrier
+    @_exported public import Difference
+    @_exported public import Property
+    @_exported public import Tagged
 #endif
