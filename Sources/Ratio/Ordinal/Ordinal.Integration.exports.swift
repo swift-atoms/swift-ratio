@@ -1,8 +1,8 @@
 #if Ordinal
-    public import Cardinal
-    public import Carrier
-    public import Difference
-    public import Magnitude
-    public import Ordinal
-    public import Tagged
+    import Cardinal
+    import Carrier
+    import Difference
+    import Magnitude
+    import Ordinal
+    import Tagged
 #endif
