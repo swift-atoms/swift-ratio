@@ -84,6 +84,14 @@ extension Count {
     }
 }
 
+@Test func `cardinal quotient rejects a fractional factor as nonintegral`() throws {
+    let count = Tagged<B, Cardinal>(_unchecked: Cardinal(1))
+    let half = try Ratio<A, B>(numerator: 1, denominator: 2)
+    #expect(throws: Ratio<A, B>.Error.nonintegralFactor) {
+        try half.quotientAndRemainder(dividing: count)
+    }
+}
+
 @Test func `tagged cardinal scaling changes domain`() throws {
     let count = Tagged<A, Cardinal>(_unchecked: Cardinal(7))
     let result: Tagged<B, Cardinal> = try Ratio<A, B>.positive(magnitude(3)).multiply.exact(
