@@ -6,7 +6,7 @@
     import Ordinal
     public import Tagged
     import Magnitude
-    public import Rational
+    import Rational
 
     public import struct Cardinal.Cardinal
     public import struct Tagged.Tagged
@@ -25,6 +25,7 @@
                 bitsPerWord: Ratio<Word, Bit>
             ) {
 
+                let bitsPerWordRaw = Self.bitsPerWordCount(bitsPerWord)
                 let (wordCount, remainingBits) = {
                     do {
                         return try bitsPerWord.quotientAndRemainder(dividing: count)
@@ -45,12 +46,6 @@
                     roundedWordCount = wordCount
                 }
                 self.words = Words(count: roundedWordCount)
-                let bitsPerWordRaw: UInt
-                do {
-                    bitsPerWordRaw = try bitsPerWord.value.integer(as: UInt.self)
-                } catch {
-                    preconditionFailure("Bits per word is not representable as UInt: \(error)")
-                }
                 let bitsPerWordCount = Tagged<Bit, Cardinal>(
                     _unchecked: Cardinal(bitsPerWordRaw)
                 )
@@ -69,6 +64,23 @@
     }
 
     extension Bit.Pack {
+
+        /// The bits a `bitsPerWord` ratio places in each word: a whole number from 1
+        /// through `Word.bitWidth`, since a word holds no more bits than its width.
+        @usableFromInline
+        static func bitsPerWordCount(_ bitsPerWord: Ratio<Word, Bit>) -> UInt {
+            let count: UInt
+            do {
+                count = try bitsPerWord.value.integer(as: UInt.self)
+            } catch {
+                preconditionFailure("Bits per word is not a whole number of bits: \(error)")
+            }
+            precondition(
+                count > 0 && count <= UInt(Word.bitWidth),
+                "Bits per word must be from 1 through \(Word.bitWidth), the width of \(Word.self)"
+            )
+            return count
+        }
 
         @inlinable
         public static var bitWidth: Tagged<Bit, Cardinal> {

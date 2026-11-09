@@ -6,7 +6,7 @@
     public import Ordinal
     public import Tagged
     public import Magnitude
-    public import Rational
+    import Rational
     public import struct Cardinal.Cardinal
 
     public import struct Ordinal.Ordinal
@@ -41,6 +41,10 @@
                 self.word = word
                 self.bit = bit
                 precondition(bit.underlying.polarity != .negative)
+                precondition(
+                    bit.underlying.magnitude.value.rawValue < UInt(Word.bitWidth),
+                    "Bit offset must be less than \(Word.bitWidth), the width of \(Word.self)"
+                )
                 self.mask = Word(1) << bit.underlying.magnitude.value.rawValue
             }
 
@@ -50,6 +54,7 @@
                 bitsPerWord: Ratio<Word, Bit>
             ) {
 
+                _ = Bit.Pack<Word>.bitsPerWordCount(bitsPerWord)
                 let (wordIndex, bitOffset) = {
                     do {
                         return try bitsPerWord.quotientAndRemainder(dividing: index)
@@ -83,14 +88,8 @@
         public func index(
             bitsPerWord: Ratio<Word, Bit>
         ) -> Index<Bit> {
-            precondition(bitsPerWord.polarity == .positive)
             precondition(bit.underlying.polarity != .negative)
-            let bitsPerWordValue: UInt
-            do {
-                bitsPerWordValue = try bitsPerWord.value.integer(as: UInt.self)
-            } catch {
-                preconditionFailure("Bits per word is not representable as UInt: \(error)")
-            }
+            let bitsPerWordValue = Bit.Pack<Word>.bitsPerWordCount(bitsPerWord)
             let (precedingBits, multiplicationOverflow) = word.underlying.rawValue
                 .multipliedReportingOverflow(by: bitsPerWordValue)
             precondition(!multiplicationOverflow)
