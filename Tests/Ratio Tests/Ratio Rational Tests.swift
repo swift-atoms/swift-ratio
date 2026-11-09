@@ -71,7 +71,7 @@ extension `Ratio Rational Tests`.`Ratios preserve exact rational quantities` {
         let whole = Tagged<Second, Cardinal>(_unchecked: Cardinal(120))
         #expect(try ratio.applying(to: whole).underlying == Cardinal(2))
         #expect(throws: Ratio<Second, Minute>.Error.inexact) {
-            try ratio.applying(to: Tagged<Second, Cardinal>(_unchecked: Cardinal(1)))
+            try ratio.applying(to: Tagged<Second, Cardinal>(_unchecked: Cardinal.one))
         }
     }
 }

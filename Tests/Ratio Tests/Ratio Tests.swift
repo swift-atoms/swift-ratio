@@ -75,7 +75,7 @@ extension Count {
 }
 
 @Test func `cardinal quotient rejects zero and negative factors`() {
-    let count = Tagged<B, Cardinal>(_unchecked: Cardinal(1))
+    let count = Tagged<B, Cardinal>(_unchecked: Cardinal.one)
     #expect(throws: Ratio<A, B>.Error.zeroFactor) {
         try Ratio<A, B>.zero.quotientAndRemainder(dividing: count)
     }
@@ -85,7 +85,7 @@ extension Count {
 }
 
 @Test func `cardinal quotient rejects a fractional factor as nonintegral`() throws {
-    let count = Tagged<B, Cardinal>(_unchecked: Cardinal(1))
+    let count = Tagged<B, Cardinal>(_unchecked: Cardinal.one)
     let half = try Ratio<A, B>(numerator: 1, denominator: 2)
     #expect(throws: Ratio<A, B>.Error.nonintegralFactor) {
         try half.quotientAndRemainder(dividing: count)
@@ -113,11 +113,11 @@ extension Count {
 
 @Test func `negative ratio accepts zero Cardinal and rejects nonzero Cardinal`() throws {
     let ratio = Ratio<A, B>.negative(magnitude(.max))
-    let zero = Count<A>(Cardinal(0))
-    let one = Count<A>(Cardinal(1))
-    #expect(try ratio.multiply.exact(by: zero).underlying == Cardinal(0))
-    #expect((ratio * zero).underlying == Cardinal(0))
-    #expect((zero * ratio).underlying == Cardinal(0))
+    let zero = Count<A>(Cardinal.zero)
+    let one = Count<A>(Cardinal.one)
+    #expect(try ratio.multiply.exact(by: zero).underlying == Cardinal.zero)
+    #expect((ratio * zero).underlying == Cardinal.zero)
+    #expect((zero * ratio).underlying == Cardinal.zero)
     #expect(throws: Ratio<A, B>.Error.negativeFactor) {
         try ratio.multiply.exact(by: one)
     }
