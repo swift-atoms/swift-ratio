@@ -26,13 +26,13 @@
             ) {
 
                 let bitsPerWordRaw = Self.bitsPerWordCount(bitsPerWord)
-                let (wordCount, remainingBits) = {
-                    do {
-                        return try bitsPerWord.quotientAndRemainder(dividing: count)
-                    } catch {
-                        preconditionFailure("Bit count outside the representable word range: \(error)")
-                    }
-                }()
+                let wordCount: Tagged<Word, Cardinal>
+                let remainingBits: Tagged<Bit, Cardinal>
+                do {
+                    (wordCount, remainingBits) = try bitsPerWord.quotientAndRemainder(dividing: count)
+                } catch {
+                    preconditionFailure("Bit count outside the representable word range: \(error)")
+                }
                 let hasPartialWord = remainingBits.underlying.rawValue > 0
                 let roundedWordCount: Tagged<Word, Cardinal>
                 if hasPartialWord {

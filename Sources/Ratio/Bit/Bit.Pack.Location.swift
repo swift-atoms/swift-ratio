@@ -55,13 +55,13 @@
             ) {
 
                 _ = Bit.Pack<Word>.bitsPerWordCount(bitsPerWord)
-                let (wordIndex, bitOffset) = {
-                    do {
-                        return try bitsPerWord.quotientAndRemainder(dividing: index)
-                    } catch {
-                        preconditionFailure("Bit index outside the representable word range: \(error)")
-                    }
-                }()
+                let wordIndex: Tagged<Word, Ordinal>
+                let bitOffset: Tagged<Bit, Difference>
+                do {
+                    (wordIndex, bitOffset) = try bitsPerWord.quotientAndRemainder(dividing: index)
+                } catch {
+                    preconditionFailure("Bit index outside the representable word range: \(error)")
+                }
                 self.word = wordIndex
                 self.bit = bitOffset
                 self.mask = Word(1) << bitOffset.underlying.magnitude.value.rawValue
